@@ -10,10 +10,28 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 var _ = require('lodash');
-var parsedBody = {
-  results: []
+var fs = require('fs');
+var data = {
+  results: [{
+      username: 'Jono',
+      text: 'Do my bidding!'
+    }, 
+    {
+      username: "John",
+      text: "Hello World"
+    }]
 };
+
+var handleJSONData = function(message) {
+  var pastDataFile = fs.readFileSync("data.json");
+  var pastData = JSON.parse(pastDataFile);
+  pastData.results.push(message);
+  var json = JSON.stringify(pastData);
+  fs.writeFileSync("data.json", json);  
+}
+
 var requestHandler = function(request, response) {
+  
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -50,27 +68,29 @@ console.log('Method:' + request.method);
 
   if (request.method === 'OPTIONS' && _.includes(request.url, "/classes/messages")) {
     response.writeHead(statusCode, headers);
-    response.end(JSON.stringify(parsedBody));
+    response.end(fs.readFileSync("data.json"));
   } else if (request.method === 'GET' && _.includes(request.url, "/classes/messages")) {
     // read from file
       response.writeHead(statusCode, headers);
-      response.end(JSON.stringify(parsedBody));
+      response.end(fs.readFileSync("data.json"));
   } else if (request.method === 'POST' && _.includes(request.url, "/classes/messages")) {
     request.on('data', function(message) {
 
       //var string = JSON.parse(message);
       var message = JSON.parse(message)
       console.log(message);
-      parsedBody.results.push(message);
+      
+      handleJSONData(message);
+      //data.results.push(message);
     })
     request.on('end', function() {
-    response.end(JSON.stringify(parsedBody));
+    response.end(JSON.stringify(data));
     });
       response.writeHead(postCode, headers);
 
   } else {
     response.writeHead(errorCode, headers);
-    response.end(JSON.stringify(parsedBody));
+    response.end(fs.readFileSync("data.json"));
   }
 
   

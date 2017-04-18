@@ -23,6 +23,7 @@
     "chai": "^3.5.0",
     "eslint-config-hackreactor": "git://github.com/reactorcore/eslint-config-hackreactor",
     "mocha": "^2.4.5",
+    "mochawesome": "^2.0.5",
     "nodemon": "^1.11.0",
     "request": "^2.70.0"
   },
@@ -32,6 +33,7 @@
     ]
   },
   "dependencies": {
+    "lodash": "^4.17.4",
     "underscore": "^1.8.3"
   }
 }

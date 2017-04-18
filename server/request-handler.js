@@ -1,6 +1,4 @@
-/*************************************************************
-
-You should implement your request handler function in this file.
+/************************************************************* You should implement your request handler function in this file.
 
 requestHandler is already getting passed to http.createServer()
 in basic-server.js, but it won't work as is.
@@ -11,22 +9,9 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
-var data = { 
-  results: [{
-        username: 'Jono Smith',
-        text: 'Do my bidding!',
-        roomname: 'lobby'
-    },
-    {
-        username: 'John',
-        text: 'Hello World',
-        roomname: 'lobby'
-    },
-    {
-        username: 'Joe',
-        text: 'testing 123',
-        roomname: 'lobby'
-    }]
+var _ = require('lodash');
+var parsedBody = {
+  results: []
 };
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -46,6 +31,8 @@ var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   // The outgoing status.
   var statusCode = 200;
+  var postCode = 201;
+  var errorCode = 404;
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
@@ -56,45 +43,45 @@ var requestHandler = function(request, response) {
   // other than plain text, like JSON or HTML.
 headers['Content-Type'] = 'application/json';
 console.log('Method:' + request.method);
-
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
-  
 
-  if (request.method === 'OPTIONS') {
+  response.writeHead(statusCode, headers);
+
+  if (request.method === 'OPTIONS' && _.includes(request.url, "/classes/messages")) {
     response.writeHead(statusCode, headers);
-    response.end(JSON.stringify(data));
-  } else if (request.method === 'GET') {
-    // read from file 
+    response.end(JSON.stringify(parsedBody));
+  } else if (request.method === 'GET' && _.includes(request.url, "/classes/messages")) {
+    // read from file
       response.writeHead(statusCode, headers);
-      response.end(JSON.stringify(data));
-  } else if (request.method === 'POST') {
-    // WRITE TO file
-    // parse(data)
-    
+      response.end(JSON.stringify(parsedBody));
+  } else if (request.method === 'POST' && _.includes(request.url, "/classes/messages")) {
     request.on('data', function(message) {
+
       //var string = JSON.parse(message);
       var message = JSON.parse(message)
       console.log(message);
-      data.results.push(message);
-    }).on('end', function() {
-      response.writeHead(statusCode, headers);
-      response.end(JSON.stringify(data));
+      parsedBody.results.push(message);
+    })
+    request.on('end', function() {
+    response.end(JSON.stringify(parsedBody));
     });
+      response.writeHead(postCode, headers);
 
+  } else {
+    response.writeHead(errorCode, headers);
+    response.end(JSON.stringify(parsedBody));
   }
 
-
-
+  
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
   // up in the browser.
   //
-  // Calling .end "flushes" the response's internal buffer, forcing
+  // Calling .end “flushes” the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('testing123');
+  //response.end('testing123');
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).

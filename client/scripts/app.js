@@ -37,12 +37,13 @@ var app = {
 
   send: function(message) {
     app.startSpinner();
-
+    console.log(message);
     // POST the message to the server
     $.ajax({
       url: app.server,
       type: 'POST',
-      data: message,
+      data: JSON.stringify(message),
+      contentType: 'application/json',
       success: function (data) {
         // Clear messages input 
         // Trigger a fetch to update the messages, pass true to animate

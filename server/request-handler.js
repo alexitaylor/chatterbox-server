@@ -54,7 +54,7 @@ var requestHandler = function(request, response) {
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'application/json';
+headers['Content-Type'] = 'application/json';
 console.log('Method:' + request.method);
 
   // .writeHead() writes to the request line and headers of the response,
@@ -72,9 +72,18 @@ console.log('Method:' + request.method);
   } else if (request.method === 'POST') {
     // WRITE TO file
     // parse(data)
+    
+    request.on('data', function(message) {
+      //var string = JSON.parse(message);
+      var message = JSON.parse(message)
+      console.log(message);
+      data.results.push(message);
+    }).on('end', function() {
+      response.writeHead(statusCode, headers);
+      response.end(JSON.stringify(data));
+    });
+
   }
-
-
 
 
 

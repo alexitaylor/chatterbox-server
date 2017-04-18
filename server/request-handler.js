@@ -84,7 +84,7 @@ console.log('Method:' + request.method);
       //data.results.push(message);
     })
     request.on('end', function() {
-    response.end(JSON.stringify(data));
+    response.end(fs.readFileSync("data.json"));
     });
       response.writeHead(postCode, headers);
 

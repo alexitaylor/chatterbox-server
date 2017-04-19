@@ -1,4 +1,3 @@
-
 var app = {
 
   //TODO: The current 'handleUsernameClick' function just toggles the class 'friend'
@@ -45,7 +44,7 @@ var app = {
       data: JSON.stringify(message),
       contentType: 'application/json',
       success: function (data) {
-        // Clear messages input 
+        // Clear messages input
         // Trigger a fetch to update the messages, pass true to animate
         app.fetch();
       },
@@ -62,7 +61,7 @@ var app = {
       data: { order: '-createdAt' },
       contentType: 'application/json',
       success: function(data) {
-        
+
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
 
@@ -73,8 +72,8 @@ var app = {
         var mostRecentMessage = data.results[data.results.length - 1];
 
         // Only bother updating the DOM if we have a new message
-        
-        
+
+
           // Update the UI with the fetched rooms
           app.renderRoomList(data.results);
 
@@ -83,7 +82,7 @@ var app = {
 
           // Store the ID of the most recent message
           app.lastMessageId = mostRecentMessage.objectId;
-        
+
       },
       error: function(error) {
         console.error('chatterbox: Failed to fetch messages', error);
@@ -96,7 +95,7 @@ var app = {
   },
 
   renderMessages: function(messages, animate) {
-    
+
     // Clear existing messages`
     app.clearMessages();
     app.stopSpinner();
@@ -149,7 +148,8 @@ var app = {
     if (!message.roomname) {
       message.roomname = 'lobby';
     }
-
+    // Friendly-user way of showing time
+    var time = moment(message.date);
     // Create a div to hold the chats
     var $chat = $('<div class="chat"/>');
 
@@ -163,10 +163,14 @@ var app = {
       $username.addClass('friend');
     }
 
-    var $message = $('<br><span/>');
+    var $message = $('<br><span><span/>');
+
     $message.text(message.text).appendTo($chat);
 
-    // Add the message to the UI
+    var $time = $('<br><small></small>');
+    $time.text(time.fromNow()).appendTo($message);
+
+    // // Add the message to the UI
     app.$chats.append($chat);
 
   },

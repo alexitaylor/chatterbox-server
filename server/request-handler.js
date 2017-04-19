@@ -11,8 +11,6 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 var _ = require('lodash');
 var fs = require('fs');
-var moment = require('moment');
-moment().format();
 var data = {
     results: []
 };
@@ -22,12 +20,6 @@ var handleJSONData = function(message) {
     var pastData = JSON.parse(pastDataFile);
     message.date = new Date();
     pastData.results.unshift(message);
-
-    myObjects = _.sortBy(pastData.results, 'date');
-    console.log();
-
-
-
     var json = JSON.stringify(pastData);
     fs.writeFileSync("data.json", json);
 };
